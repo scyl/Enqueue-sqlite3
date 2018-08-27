@@ -61,9 +61,9 @@ app.get('/tutorView.js', function(req, res){
 
 app.get('/submit.html', function(req, res){
   res.sendFile(__dirname + '/views/submit.html');
-  var roomKey = req.query.roomKey.substring(0,30);
+  var roomKey = 'q' + req.query.roomKey.substring(0,30);
   db.prepare('CREATE TABLE IF NOT EXISTS ' + roomKey + ' (ROWID INTEGER PRIMARY KEY AUTOINCREMENT, NAME TEXT, LOC TEXT);').run();
-  db.prepare('INSERT INTO ' + roomKey + ' (NAME, LOC) VALUES (?, ?);').run(req.query.stdname.substring(0,30), req.query.compNum.substring(0,10));
+  db.prepare('INSERT INTO ' + roomKey + ' (NAME, LOC) VALUES (?, ?);').run(encodeURIComponent(req.query.stdname.substring(0,30)), encodeURIComponent(req.query.compNum.substring(0,10)));
   
   printQueue(roomKey);
   io.to(roomKey).emit('updateQueue', queue);
@@ -72,7 +72,7 @@ app.get('/submit.html', function(req, res){
 io.on('connection', function(socket){
   console.log('a tutor/screen connected: ' + socket.id);
   console.log('joined room: ' + socket.handshake.query['roomKey']);
-  var roomKey = socket.handshake.query['roomKey'].substring(0,30);
+  var roomKey = 'q' + socket.handshake.query['roomKey'].substring(0,30);
   socket.join(roomKey, () => {
     let rooms = Object.keys(socket.rooms);
     console.log(rooms);
