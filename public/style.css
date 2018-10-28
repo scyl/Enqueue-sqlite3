@@ -124,6 +124,21 @@ th {
   font-size: 20px;
 }
 
+th.name {
+  width: 50%;
+  vertical-align: bottom;
+  height: 1.4em;
+}
+
+th.done {
+  text-align: right;
+}
+
+button.done {
+  padding: 2px 24px;
+  border-left-width: 2px;
+}
+
 .nameRow {
   vertical-align: bottom;
 }
@@ -134,12 +149,6 @@ th {
 
 .bigText {
   font-size: 40px;
-}
-
-.name {
-  width: 50%;
-  vertical-align: bottom;
-  height: 1.4em;
 }
 
 .queue {

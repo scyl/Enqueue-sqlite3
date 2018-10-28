@@ -79,11 +79,18 @@ io.on('connection', function(socket){
   });
   
   db.prepare('CREATE TABLE IF NOT EXISTS ' + roomKey + ' (ROWID INTEGER PRIMARY KEY AUTOINCREMENT, NAME TEXT, LOC TEXT);').run();
-  queue = db.prepare('SELECT NAME, LOC FROM ' + roomKey + ';').all();
+  queue = db.prepare('SELECT NAME, LOC, ROWID FROM ' + roomKey + ';').all();
   socket.emit('updateQueue', queue);
   
   socket.on('next', function(){
     db.prepare('DELETE FROM ' + roomKey + ' WHERE ROWID = (SELECT MIN(ROWID) FROM ' + roomKey + ');').run();
+    printQueue(roomKey);
+    io.to(roomKey).emit('updateQueue', queue);
+  });
+  
+  socket.on('done', function(id) {
+    console.log("removing " + id + " from " + roomKey);
+    db.prepare('DELETE FROM ' + roomKey + ' WHERE ROWID = ' + id + ';').run();
     printQueue(roomKey);
     io.to(roomKey).emit('updateQueue', queue);
   });
@@ -99,11 +106,12 @@ var screenUsers = [];
 var tutorUsers = [];
 
 function printQueue(roomKey) {
-  queue = db.prepare('SELECT NAME, LOC FROM ' + roomKey + ';').all();
+  queue = db.prepare('SELECT NAME, LOC, ROWID FROM ' + roomKey + ';').all();
   
   console.log(roomKey + ' Queue:');
   var i = 0;
   for (i = 0; i < queue.length; i++) {
+    queue[i]['ROWID'] = queue[i]['ROWID'].toString()
     console.log(queue[i]);
   }
   console.log()

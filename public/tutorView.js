@@ -27,9 +27,14 @@ $(function() {
     console.log("Next clicked");
   });
   
+  $("#queue").on('click', 'button.done', function() {
+    socket.emit('done', this.id);
+    console.log("Done clicked for " + this.id);
+});
+  
 });
 
 
 function genRoll(user) {
-  return "<table><tr class='nameRow'><th class='names'>" + user['NAME'] + "</th><th class='name'>" + user['LOC'] + "</th></tr></table>";
+  return "<table><tr class='nameRow'><th class='name'>" + user['NAME'] + "</th><th class='name'>" + user['LOC'] + "</th><th class='done'><button class='done' id='" + user['ROWID'] + "'>Done</button></th></tr></table>";
 }
